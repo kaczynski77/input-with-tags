@@ -1,0 +1,214 @@
+:root {
+  --box-height: 25px;
+  --lightblue: #e7f6ff;
+  --lightgray: #f3f3f3;
+  --darkgray: #868686;
+  --blue: #1f91ff;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+ul[class],
+ol[class] {
+  padding: 0;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul[class],
+ol[class],
+li,
+figure,
+figcaption,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+body {
+  min-height: 100vh;
+  scroll-behavior: smooth;
+  line-height: 1.5;
+  font-family: Arial, sans-serif;
+}
+
+ul[class],
+ol[class] {
+  list-style: none;
+}
+
+a:not([class]) {
+  text-decoration-skip-ink: auto;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+article > * + * {
+  margin-top: 1em;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+#dropdown {
+  display: flex;
+  flex-wrap: wrap;
+  position: absolute;
+  margin-top: calc(var(--box-height) + 5px);
+  width: 80%;
+  border: 2px solid lightgray;
+  border-radius: 5px;
+}
+
+#dropdown span {
+  text-align: left;
+  width: 100%;
+  line-height: var(--box-height);
+  display: flex;
+  padding-left: 8px;
+}
+
+#dropdown.hidden {
+  display: none;
+}
+
+#dropdown.active {
+  display: flex;
+}
+
+#dropdown span.selected {
+  background-color: var(--lightblue);
+  font-weight: 800;
+  position: relative;
+}
+
+#dropdown span.selected .checkmark {
+  display: inline-block;
+  transform: rotate(45deg);
+  height: 20px;
+  width: 10px;
+  border-bottom: 2px solid var(--blue);
+  border-right: 2px solid var(--blue);
+  /* margin-left: auto; */
+  margin-right: 15px;
+  margin-top: 0px;
+  margin-bottom: 5px;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+}
+
+#request_container {
+  display: flex;
+  margin: 0 8%;
+  position: relative;
+}
+
+#request_container textarea {
+  border: none;
+  line-height: var(--box-height);
+  height: var(--box-height);
+  width: 100%;
+  resize: none;
+}
+#id_request {
+  display: none;
+}
+
+#request_container textarea:focus {
+  outline: none;
+}
+
+#request_container .search_box {
+  display: flex;
+  width: 80%;
+  height: var(--box-height);
+}
+
+#request_container button {
+  width: 15%;
+  height: var(--box-height);
+  vertical-align: middle;
+  margin-left: auto;
+  font-size: 15px;
+  border: 2px solid black;
+  background-color: white;
+  text-transform: uppercase;
+  line-height: 15px;
+  border-radius: 5px;
+  font-weight: 800;
+}
+
+#request_container .borderbox {
+  position: absolute;
+  border: 1px solid black;
+  height: var(--box-height);
+  width: 80%;
+  border-radius: 5px;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+}
+#request_container .borderbox.active {
+  position: absolute;
+  border: 1px solid var(--blue);
+  height: var(--box-height);
+  width: 80%;
+  border-radius: 5px;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+}
+
+#request_container .tag_items {
+  display: flex;
+  width: fit-content;
+  max-width: 80%;
+  margin-left: 6px;
+  min-height: 0;
+  align-items: center;
+}
+
+#request_container * {
+  font-size: calc(var(--box-height) - 10px);
+}
+
+.tag_items span {
+  padding-left: 5px;
+  padding-right: 25px;
+  background-color: var(--lightgray);
+  border: 1px white solid;
+  display: flex;
+  align-items: center;
+  padding-right: 5px;
+}
+
+.tag_items span .cross {
+  content: "\00d7";
+  margin-left: 5px;
+  color: var(--darkgray);
+  border: none;
+}
+.tag_items span .tag_text {
+  border: none;
+}
+
+.checkmark {
+  pointer-events: none;
+}
