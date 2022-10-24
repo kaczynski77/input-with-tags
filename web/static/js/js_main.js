@@ -1,7 +1,8 @@
 (function (window) {
   ("use strict");
 
-  var inputHandlerResult = "";
+  let ajaxResult = "";
+  let inputHandlerResult = "";
 
   const ajaxRequest = (url, method, data) => {
     return new Promise((resolve, reject) => {
@@ -36,7 +37,7 @@
       if (delimeterFound) {
         requestInput.value = "";
         inputHandlerResult = value.slice(0, -1);
-        buildAndRenderDropDown(null, inputHandlerResult);
+        buildAndRenderDropDown(ajaxResult, inputHandlerResult);
       }
     });
   };
@@ -71,36 +72,44 @@
 
   const buildAndRenderDropDown = (inputData, inputHandlerResult) => {
     const selectDropdown = document.querySelector("#dropdown");
+    selectDropdown.innerHTML = "";
 
     const isInitialData = inputData !== undefined && inputData !== null;
     const isHandlerResult =
       inputHandlerResult !== undefined && inputHandlerResult !== null;
 
     const createItem = (index) => {
+      let newLoopItem = document.createElement("span");
       let newListItem = document.createElement("span");
-      let listText = document.createElement("span");
-      listText.classList.add("list_text");
+      let loopItemText = document.createElement("span");
+      let listItemText = document.createElement("span");
+      loopItemText.classList.add("list_text");
+      listItemText.classList.add("list_text");
       let checkmark = document.createElement("span");
       checkmark.classList.add("checkmark");
 
+      //handle clicks on items
+      const itemsClickHandler = (item) => {
+        item.addEventListener("click", function (event) {
+          let noCheckmark = event.target.children.length === 0;
+          noCheckmark ? item.append(checkmark) : "";
+          event.currentTarget.classList.toggle("selected");
+        });
+      };
+
       /* if there is a loop for items create new item for each one, 
       if single - put a result from inputHandler()*/
-      if (isInitialData) {
-        listText.innerText = inputData[index];
-        newListItem.append(listText);
-        selectDropdown.append(newListItem);
-      }
-      if (isHandlerResult) {
-        listText.innerText = inputHandlerResult;
-        newListItem.append(listText);
+      if (index !== null) {
+        loopItemText.innerText = inputData[index];
+        newLoopItem.append(loopItemText);
+        selectDropdown.append(newLoopItem);
+        itemsClickHandler(newLoopItem);
+      } else {
+        listItemText.innerText = inputHandlerResult;
+        newListItem.append(listItemText);
         selectDropdown.prepend(newListItem);
+        itemsClickHandler(newListItem);
       }
-      //handle clicks on items
-      newListItem.addEventListener("click", function (event) {
-        let noCheckmark = event.target.children.length === 0;
-        noCheckmark ? newListItem.append(checkmark) : "";
-        event.currentTarget.classList.toggle("selected");
-      });
     };
 
     //generate items for dropdown from inital data
@@ -112,8 +121,7 @@
     //if there is new input tag
 
     if (isHandlerResult) {
-      createItem();
-      // handle tag
+      createItem(null);
     }
 
     //handle dropdown visibility behavior
@@ -185,7 +193,8 @@
   document.addEventListener("DOMContentLoaded", () => {
     ajaxRequest("http://127.0.0.1:8000/api/categories_json/", "GET").then(
       (result) => {
-        buildAndRenderDropDown(result["data"], null);
+        ajaxResult = result["data"];
+        buildAndRenderDropDown(ajaxResult, null);
         inputHandler();
       }
     );
