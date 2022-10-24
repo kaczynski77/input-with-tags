@@ -1,5 +1,7 @@
-(function (window, $) {
-  "use strict";
+(function (window) {
+  ("use strict");
+
+  var inputHandlerResult = "";
 
   const ajaxRequest = (url, method, data) => {
     return new Promise((resolve, reject) => {
@@ -22,6 +24,23 @@
     });
   };
 
+  const inputHandler = () => {
+    const requestInput = document.getElementById("id_location01");
+    //find delimeter and clear input
+    requestInput.addEventListener("input", (event) => {
+      let value = event.target.value;
+      let lastChar = value.slice(-1);
+      let delimeterFound =
+        lastChar === " " || lastChar === "," || lastChar === "\n";
+
+      if (delimeterFound) {
+        requestInput.value = "";
+        inputHandlerResult = value.slice(0, -1);
+        buildAndRenderDropDown(null, inputHandlerResult);
+      }
+    });
+  };
+
   const renderDropDown = () => {
     const requestInput = document.getElementById("id_location01");
 
@@ -29,6 +48,7 @@
     function showDropdown() {
       let dropdown = document.querySelector("#dropdown");
       let isActive = dropdown.classList === "active";
+
       dropdown.classList = isActive ? "hidden" : "active";
 
       /*
@@ -49,40 +69,66 @@
     requestInput.addEventListener("blur", showDropdown);
   };
 
-  const buildAndRenderDropDown = (inputData) => {
+  const buildAndRenderDropDown = (inputData, inputHandlerResult) => {
     const selectDropdown = document.querySelector("#dropdown");
 
-    //generate items for dropdown
-    for (i = 0; i < inputData.length; i++) {
+    const isInitialData = inputData !== undefined && inputData !== null;
+    const isHandlerResult =
+      inputHandlerResult !== undefined && inputHandlerResult !== null;
+
+    const createItem = (index) => {
       let newListItem = document.createElement("span");
       let listText = document.createElement("span");
       listText.classList.add("list_text");
       let checkmark = document.createElement("span");
       checkmark.classList.add("checkmark");
 
-      listText.innerText = inputData[i];
-      newListItem.append(listText);
-      selectDropdown.append(newListItem);
-
+      /* if there is a loop for items create new item for each one, 
+      if single - put a result from inputHandler()*/
+      if (isInitialData) {
+        listText.innerText = inputData[index];
+        newListItem.append(listText);
+        selectDropdown.append(newListItem);
+      }
+      if (isHandlerResult) {
+        listText.innerText = inputHandlerResult;
+        newListItem.append(listText);
+        selectDropdown.prepend(newListItem);
+      }
       //handle clicks on items
       newListItem.addEventListener("click", function (event) {
         let noCheckmark = event.target.children.length === 0;
         noCheckmark ? newListItem.append(checkmark) : "";
         event.currentTarget.classList.toggle("selected");
       });
+    };
+
+    //generate items for dropdown from inital data
+    if (isInitialData) {
+      for (let i = 0; i < inputData.length; i++) {
+        createItem(i);
+      }
     }
+    //if there is new input tag
+
+    if (isHandlerResult) {
+      createItem();
+      // handle tag
+    }
+
     //handle dropdown visibility behavior
+    tagHandler();
     renderDropDown();
   };
 
   const tagHandler = () => {
-    //new tag in search box from clicking on list item
+    //new tag in input box from clicking on list item
     const selectListItems = document.querySelectorAll(
       "#dropdown span.list_text"
     );
     const itemsArray = [...selectListItems];
 
-    //handle clicks on list item to create a tag in search box
+    //handle clicks on list item to create a tag in a box
     itemsArray.forEach((item) => {
       item.parentElement.addEventListener("click", function (event) {
         let initial = document.querySelectorAll(".tag_text");
@@ -117,7 +163,7 @@
           );
           selectTagSpan.append(newTag);
 
-          //remove tag from searchbox on click at X sign
+          //remove tag from box on click at X sign
 
           cross.addEventListener("click", (event) => {
             event.currentTarget.parentElement.remove();
@@ -136,12 +182,12 @@
     });
   };
 
-  $(document).ready(() => {
+  document.addEventListener("DOMContentLoaded", () => {
     ajaxRequest("http://127.0.0.1:8000/api/categories_json/", "GET").then(
       (result) => {
-        buildAndRenderDropDown(result["data"]);
-        tagHandler();
+        buildAndRenderDropDown(result["data"], null);
+        inputHandler();
       }
     );
   });
-})(window, jQuery);
+})(window);
