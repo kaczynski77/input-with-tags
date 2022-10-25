@@ -34,21 +34,24 @@
 
     //find delimeter and clear input
     requestInput.addEventListener("input", (event) => {
+      const dropdownUserList = document.querySelector("#dropdown .user_input");
+
       currentValue = requestInput.value;
-      console.log(currentValue);
+      dropdownUserList.innerText = currentValue;
+
       let lastChar = currentValue.slice(-1);
       let delimeterFound =
         lastChar === " " || lastChar === "," || lastChar === "\n";
 
       if (delimeterFound) {
-        console.log("delimeter found");
+        inputHandlerResult.pop();
         inputHandlerResult.push(currentValue.slice(0, -1));
         renderDropdown(inputHandlerResult, "pre");
         //clear input
         requestInput.value = "";
         currentValue = "";
       }
-      dropdownVisibility(currentValue, focus);
+      dropdownVisibility(focus, currentValue);
     });
 
     //if focused paint the box borders, repaint back on focusout
@@ -60,7 +63,7 @@
     requestInput.addEventListener("focus", (event) => {
       border.style.border = "1px solid var(--blue)";
       focus = true;
-      dropdownVisibility(currentValue, focus);
+      dropdownVisibility(focus);
     });
     /* requestInput.addEventListener("focusout", (event) => {
       border.classList.remove("focused");
@@ -71,16 +74,24 @@
   };
 
   //show/hide dropdown list
-  const dropdownVisibility = (focus) => {
-    const dropdown = document.querySelector("#dropdown .list");
+  const dropdownVisibility = (focus, inputValue) => {
+    const dropdownList = document.querySelector("#dropdown .list");
+    const dropdownUserList = document.querySelector("#dropdown .user_input");
     //check if dropdown is currently active
     //console.log("currentInput:", currentInput.length);
     //console.log(focus);
 
     if (focus) {
-      dropdown.classList.remove("hidden");
+      if (inputValue !== undefined && inputValue.length > 0) {
+        dropdownList.classList.add("hidden");
+        dropdownUserList.classList.remove("hidden");
+      } else {
+        dropdownList.classList.remove("hidden");
+        dropdownUserList.classList.add("hidden");
+      }
     } else {
-      dropdown.classList.add("hidden");
+      dropdownList.classList.add("hidden");
+      dropdownUserList.classList.add("hidden");
     }
   };
 
@@ -88,19 +99,31 @@
     const selectList = document.querySelector("#dropdown .list");
     //selectList.innerHTML = "";
 
-    console.log(data);
-
     const createItem = (index, element, input) => {
-      let isInList = currentList.includes(input[index]);
+      //get current list of items in dropdown
+      let renderedList = selectList.children;
+      let currentlyRendered = [...renderedList];
+      let mappedList = currentlyRendered.map((element) => element.innerText);
+
+      //check if item is already in list - if true: do nothing
+      let isInList = mappedList.includes(input[index]);
 
       if (isInList) {
         return;
       } else {
         let newItem = document.createElement("span");
         let itemText = document.createElement("span");
-        itemText.classList.add("list_text");
         let checkmark = document.createElement("span");
+
+        itemText.classList.add("list_text");
         checkmark.classList.add("checkmark");
+
+        itemText.innerText = input[index];
+
+        newItem.append(itemText);
+        selectList.append(newItem);
+
+        if (param === "pre") selectList.prepend(newItem);
 
         //handle clicks on items
         const itemsClickHandler = (item) => {
@@ -111,14 +134,9 @@
             //focus on input when item clicked
             const requestInput = document.getElementById("id_location01");
             requestInput.focus();
-            console.log(currentTags.includes(item.innerText));
           });
         };
 
-        itemText.innerText = input[index];
-        newItem.append(itemText);
-        selectList.append(newItem);
-        if (param === "pre") selectList.prepend(newItem);
         itemsClickHandler(newItem);
         currentList.push(input[index]);
       }
@@ -127,7 +145,6 @@
     //generate items for dropdown
 
     data.forEach((element, index) => {
-      console.log(index);
       createItem(index, element, data);
     });
   };
@@ -223,7 +240,7 @@
       (result) => {
         ajaxResult = result["data"];
         renderDropdown(ajaxResult, currentList);
-        inputHandler(currentList, inputHandlerResult);
+        inputHandler(inputHandlerResult);
       }
     );
   });

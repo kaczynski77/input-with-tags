@@ -74,6 +74,7 @@ select {
   width: 80%;
   border: 2px solid var(--dropdown);
   border-radius: 5px;
+  background-color: white;
 }
 
 #dropdown .list {
@@ -134,6 +135,8 @@ select {
 }
 #id_request {
   height: 0;
+  position: absolute;
+  left: -500px;
 }
 
 #request_container textarea:focus {
