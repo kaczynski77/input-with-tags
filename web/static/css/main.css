@@ -72,30 +72,35 @@ select {
   position: absolute;
   margin-top: calc(var(--box-height) + 5px);
   width: 80%;
-  border: 2px solid lightgray;
+  border: 2px solid var(--dropdown);
   border-radius: 5px;
 }
 
-#dropdown span {
-  text-align: left;
+#dropdown .list {
+  width: 100%;
+  display: flex;
+
+  flex-wrap: wrap;
+}
+#dropdown .list span {
   width: 100%;
   line-height: var(--box-height);
   display: flex;
   padding-left: 8px;
 }
 
-#dropdown.hidden {
+#dropdown .hidden {
   display: none;
-}
-
-#dropdown.active {
-  display: flex;
 }
 
 #dropdown span.selected {
   background-color: var(--lightblue);
   font-weight: 800;
   position: relative;
+}
+
+#dropdown .list span:hover {
+  background-color: var(--lightgray);
 }
 
 #dropdown span.selected .checkmark {
@@ -105,7 +110,6 @@ select {
   width: 10px;
   border-bottom: 2px solid var(--blue);
   border-right: 2px solid var(--blue);
-  /* margin-left: auto; */
   margin-right: 15px;
   margin-top: 0px;
   margin-bottom: 5px;
@@ -116,7 +120,7 @@ select {
 
 #request_container {
   display: flex;
-  margin: 0 8%;
+  margin: 200px 8% 0;
   position: relative;
   padding-bottom: 200px;
 }
@@ -129,14 +133,14 @@ select {
   resize: none;
 }
 #id_request {
-  display: none;
+  height: 0;
 }
 
 #request_container textarea:focus {
   outline: none;
 }
 
-#request_container .search_box {
+#request_container .tag_box {
   display: flex;
   width: 80%;
   height: var(--box-height);
@@ -148,33 +152,24 @@ select {
   vertical-align: middle;
   margin-left: auto;
   font-size: 15px;
-  border: 2px solid black;
+  border: 1px solid var(--blue);
   background-color: white;
   text-transform: uppercase;
   line-height: 15px;
   border-radius: 5px;
-  font-weight: 800;
+  color: var(--blue);
 }
 
-#request_container .borderbox {
+#request_container .border_box {
   position: absolute;
-  border: 1px solid black;
+  border: 1px solid var(--lightgray);
   height: var(--box-height);
   width: 80%;
   border-radius: 5px;
   pointer-events: none;
   top: 0;
   left: 0;
-}
-#request_container .borderbox.active {
-  position: absolute;
-  border: 1px solid var(--blue);
-  height: var(--box-height);
-  width: 80%;
-  border-radius: 5px;
-  pointer-events: none;
-  top: 0;
-  left: 0;
+  transition: 200ms;
 }
 
 #request_container .tag_items {
@@ -194,10 +189,11 @@ select {
   padding-left: 5px;
   padding-right: 25px;
   background-color: var(--lightgray);
-  border: 1px white solid;
+
   display: flex;
   align-items: center;
   padding-right: 5px;
+  border-radius: 10px;
 }
 
 .tag_items span .cross {
@@ -214,10 +210,10 @@ select {
   pointer-events: none;
 }
 
-.borderbox,
+#request_container .border_box,
 #dropdown,
 button {
-  -webkit-box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
-  -moz-box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
-  box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
+  -webkit-box-shadow: 0px 2px 5px 1px rgba(34, 60, 80, 0.2);
+  -moz-box-shadow: 0px 2px 5px 1px rgba(34, 60, 80, 0.2);
+  box-shadow: 0px 2px 5px 1px rgba(34, 60, 80, 0.2);
 }

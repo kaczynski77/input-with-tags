@@ -8,74 +8,34 @@
     <meta name="viewport" content="width=1100" />
     <meta name="robots" content="all" />
     <link rel="stylesheet" href="{% static 'css/main.css'%}" />
-    <!-- загрузка css из 'static/css/main.css'-->
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <!-- jQuery -->
-
     <script type="text/javascript" src="{% static 'js/js_main.js' %}"></script>
-    <!-- загрузка js из 'static/js/js_main.js'-->
 
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto&family=Rubik:wght@300&family=Ubuntu&display=swap"
       rel="stylesheet"
     />
-    <title>Home page</title>
+    <title>Custom tags input</title>
   </head>
 
   <body>
-    <!--<h1>Пример текста h1 (css)<h1> <span class="span_selector">Пример текста span (js jQuery)<span>
-    <script>
-        jQuery(function($){
-            $('.span_selector').css({'color':'#d433332e', 'font-size': '22pt'});
-            console.log('test jQuery script')
-        });
-    </script>
-
-
-    <hr>
-    <span>1) Скачать и установить Python с <a href="https://www.python.org/downloads/">официального сайта</a></span>
-    <br>
-    <span>2) Запуститить команудную строку в Windows или терминал в macos</span>
-    <br>
-    <span>3) Установить Django командой 'pip3 install django'</span>
-    <br>
-    <span>4) Перейти в папку с проектом 'cd путь_до_папки/interview'</span>
-    <br>
-    <span>5) Запуск локального серевера 'python3 manage.py runserver'</span>
-    <br>
-    <span>6) <a href="http://127.0.0.1:8000">Перейти на адрес сервера </a></span>
-
-
-    <hr>
-    <span>Место хранение css "interview/web/static/css/main.css", js "interview/web/static/js/main.js"</span>
-    <br>
-    <span><a href="http://127.0.0.1:8000/admin/">Админ панель</a> Логин:admin, пароль:superpass, mail:admin@mail.ru</span>
-    <br>
-    <span><a href="http://127.0.0.1:8000/api/categories_json/">../api/categories_json</a> API ответ с сервера ввиде JSON словаря с ключем 'data'<span>
-
-
-    <hr>
-    <span>Пример кода AJAX запроса на ../api/categories_json</a>:<span>
-    <br>
-   <script>
-        var elem = document.getElementsByClassName('span_for_ajax');
-        let xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function(){
-            if (this.readyState == 4 && this.status == 200){
-                myFunction(this.responseText)
-            };
-        };
-        xhttp.open("GET", "http://127.0.0.1:8000/api/categories_json/", true);
-        xhttp.send();
-
-        function myFunction(json_data){
-            console.log(json_data);
-          elem[0].innerHTML = json_data;
-        };
-    </script> -->
-    <span class="span_for_ajax"></span>
-    <hr />
+    <div class="wrapper">
+      <form method="post">
+        {% csrf_token %}
+        <span id="request_container">
+          <span class="tag_box">
+            <span class="tag_items"></span>
+            {{ form.location01 }}<br />
+            <span id="dropdown">
+              <span class="user_input hidden"></span>
+              <span class="list hidden"></span>
+            </span>
+            <span class="border_box"></span>
+          </span>
+          <button type="submit">SAVE</button>
+        </span>
+        {{ form.request }} {{ form.request.errors }}
+      </form>
+    </div>
 
     <div class="wrapper">
       <h2>Задание</h2>
@@ -137,33 +97,5 @@
       /><br />
     </div>
     <hr />
-
-    <div class="wrapper">
-      <!-- <h3>Поля формы для задания:</h3> -->
-      <form method="post">
-        {% csrf_token %}
-        <!-- csrf_token необходим для безопастной отправки формы, без него не будет работать -->
-
-        <p>Categories</p>
-
-        <br />
-        <!-- Выводит текст ошибки для поля 'request' (если есть) -->
-
-        <!--<p>
-              Дополнительное поле для примера (возможно textarea будет удобнее
-              input'a на функционал это не влияет)
-            </p>-->
-        <span id="request_container">
-          <span class="search_box">
-            <span class="tag_items"></span>
-            {{ form.location01 }}<br />
-            <span id="dropdown" class="hidden"></span>
-            <span class="borderbox"></span>
-          </span>
-          <button type="submit">Add Task</button>
-        </span>
-        {{ form.request }} {{ form.request.errors }}
-      </form>
-    </div>
   </body>
 </html>
