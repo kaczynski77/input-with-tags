@@ -34,7 +34,9 @@
 
     //find delimeter and clear input
     requestInput.addEventListener("input", (event) => {
-      const dropdownUserList = document.querySelector("#dropdown .user_input");
+      const dropdownUserList = document.querySelector(
+        "#dropdown .user_input span"
+      );
 
       currentValue = requestInput.value;
       dropdownUserList.innerText = currentValue;
@@ -134,6 +136,9 @@
             let noCheckmark = event.target.children.length === 0;
             noCheckmark ? item.append(checkmark) : "";
             event.currentTarget.classList.toggle("selected");
+
+            console.log(event.currentTarget.innerText);
+            tagHandler(event.currentTarget.innerText);
           });
         };
 
@@ -169,70 +174,57 @@
     console.log(exceeded); */
   };
 
-  const tagHandler = () => {
-    //new tag in input box from clicking on list item
+  //new tag in input box from clicking on list item
+  const tagHandler = (str) => {
+    console.log(str);
+    currentTags.includes(str) ? (notExists = false) : (notExists = true);
+    console.log(notExists);
+    if (notExists) {
+      const selectTagSpan = document.querySelector(
+        "#request_container .tag_items"
+      );
 
-    const selectListItems = document.querySelectorAll("#dropdown .list_text");
-    const itemsArray = [...selectListItems];
-    console.log(itemsArray);
+      let newTag = document.createElement("span");
+      newTag.classList.add("tag");
 
-    //handle clicks on list item to create a tag in a box
-    itemsArray.forEach((item) => {
-      item.parentElement.addEventListener("click", function (event) {
-        let notExists = true;
+      let tagText = document.createElement("span");
+      tagText.innerText = str;
+      tagText.classList.add("tag_text");
+      newTag.append(tagText);
 
-        if (currentTags.length > 0) {
-          currentTags.forEach((tag) => {
-            if (currentTags.includes(tag)) {
-              item.parentElement.remove();
-              notExists = false;
-            }
-          });
-        }
+      let cross = document.createElement("span");
+      cross.classList.add("cross");
+      cross.innerText = "✕";
+      newTag.append(cross);
 
-        if (notExists) {
-          const selectTagSpan = document.querySelector(
-            "#request_container .tag_items"
-          );
-          const tagsSpanArray = [...selectTagSpan];
+      selectTagSpan.append(newTag);
+      currentTags.push(newTag);
 
-          let newTag = document.createElement("span");
-          newTag.classList.add("tag");
+      //check if width is exceeded
+      let exceeded = false; //by default
+      checkTagsWidth(exceeded);
 
-          let tagText = document.createElement("span");
-          tagText.innerText = item.innerText;
-          tagText.classList.add("tag_text");
-          newTag.append(tagText);
+      //find tag, remove from array and from list
 
-          let cross = document.createElement("span");
-          cross.classList.add("cross");
-          cross.innerText = "✕";
-          newTag.append(cross);
+      const tagRemove = () => {};
 
-          selectTagSpan.append(newTag);
-          currentTags.push(newTag);
+      //remove tag from box on click at X sign
 
-          //check if width is exceeded
-          let exceeded = false; //by default
-          checkTagsWidth(exceeded);
-
-          //remove tag from box on click at X sign
-
-          cross.addEventListener("click", (event) => {
-            event.currentTarget.parentElement.remove();
-            //find selected row in list and remove 'selected' class
-            const selectListItems = document.querySelectorAll(
-              "#dropdown .list_text"
-            );
-            const itemsArray = [...selectListItems];
-            itemsArray.forEach((item) => {
-              if (event.target.previousSibling.innerText === item.innerText)
-                item.parentElement.classList.remove("selected");
-            });
-          });
-        }
+      cross.addEventListener("click", (event) => {
+        event.currentTarget.parentElement.remove();
+        //find selected row in list and remove 'selected' class
+        const selectListItems = document.querySelectorAll(
+          "#dropdown .list_text"
+        );
+        const itemsArray = [...selectListItems];
+        itemsArray.forEach((item) => {
+          if (event.target.previousSibling.innerText === item.innerText)
+            item.parentElement.classList.remove("selected");
+        });
       });
-    });
+    } else {
+      currentTags;
+    }
   };
 
   document.addEventListener("DOMContentLoaded", () => {

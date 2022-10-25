@@ -70,26 +70,33 @@ select {
   display: flex;
   flex-wrap: wrap;
   position: absolute;
-  margin-top: calc(var(--box-height) + 5px);
+  margin-top: calc(var(--box-height) + 3px);
   width: 80%;
   border: 2px solid var(--dropdown);
   border-radius: 5px;
   background-color: white;
+  border-top: none;
 }
 
-#dropdown .list {
+#dropdown .list,
+#dropdown .user_input {
   width: 100%;
   display: flex;
-
   flex-wrap: wrap;
 }
+
 #dropdown .list span {
+  width: 100%;
+  line-height: var(--box-height);
+  display: flex;
+  padding-left: 4px;
+}
+#dropdown .user_input span {
   width: 100%;
   line-height: var(--box-height);
   display: flex;
   padding-left: 8px;
 }
-
 #dropdown .hidden {
   display: none;
 }
@@ -123,6 +130,7 @@ select {
   display: flex;
   margin: 200px 8% 0;
   position: relative;
+  padding-bottom: 200px;
 }
 
 #request_container textarea {
