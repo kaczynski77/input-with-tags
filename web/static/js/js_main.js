@@ -60,26 +60,24 @@
       "#request_container span .border_box"
     );
 
+    const dropdown = document.querySelector("#dropdown");
+
     requestInput.addEventListener("focus", (event) => {
       border.style.border = "1px solid var(--blue)";
       focus = true;
       dropdownVisibility(focus);
     });
-    /* requestInput.addEventListener("focusout", (event) => {
-      border.classList.remove("focused");
-      border.style.border = "";
+
+    requestInput.addEventListener("blur", (event) => {
       focus = false;
-      dropdownVisibility(currentValue, focus);
-    }); */
+      dropdownVisibility(focus);
+    });
   };
 
   //show/hide dropdown list
   const dropdownVisibility = (focus, inputValue) => {
     const dropdownList = document.querySelector("#dropdown .list");
     const dropdownUserList = document.querySelector("#dropdown .user_input");
-    //check if dropdown is currently active
-    //console.log("currentInput:", currentInput.length);
-    //console.log(focus);
 
     if (focus) {
       if (inputValue !== undefined && inputValue.length > 0) {
@@ -127,13 +125,15 @@
 
         //handle clicks on items
         const itemsClickHandler = (item) => {
-          item.addEventListener("click", function (event) {
+          item.addEventListener("mousedown", function (event) {
+            event.preventDefault();
+            //focus on input when item clicked
+            const requestInput = document.querySelector("#id_location01");
+            requestInput.click();
+            //mark as selected
             let noCheckmark = event.target.children.length === 0;
             noCheckmark ? item.append(checkmark) : "";
             event.currentTarget.classList.toggle("selected");
-            //focus on input when item clicked
-            const requestInput = document.getElementById("id_location01");
-            requestInput.focus();
           });
         };
 
