@@ -6,6 +6,8 @@
   let currentList = [];
   let currentTags = [];
   let hiddenTags = [];
+  let currentTagWidth = 0;
+  let widthExceeded = false;
 
   const ajaxRequest = (url, method, data) => {
     return new Promise((resolve, reject) => {
@@ -40,8 +42,7 @@
       );
 
       currentValue = requestInput.value;
-      console.log();
-      console.log(currentValue.length);
+
       //check if input value is delimeter and clear input
       if (
         currentValue === "\n" ||
@@ -59,13 +60,12 @@
           lastChar === " " || lastChar === "," || lastChar === "\n";
         // handle tag if found
         if (delimeterFound) {
-          console.log(delimeterFound);
           inputHandlerResult.pop();
           inputHandlerResult.push(currentValue.slice(0, -1));
           renderDropdown(inputHandlerResult, "pre");
           //clear input
           requestInput.value = "";
-          console.log(currentValue);
+
           tagHandler(currentValue.slice(0, -1));
           currentValue = "";
         }
@@ -170,17 +170,26 @@
             isSelected = item.classList[0] === "selected";
 
             if (isSelected) {
-              //remove from currentTags array
+              //remove from tags arrays
               currentTags.forEach((element, index) => {
                 if (element === itemText) currentTags.splice(index, 1);
               });
+              hiddenTags.forEach((element, index) => {
+                if (element === itemText) hiddenTags.splice(index, 1);
+              });
+
               //remove tag from box
               const tagsTextsInitial = document.querySelectorAll(".tag_text");
               const tagsTextsCurrent = [...tagsTextsInitial];
 
               tagsTextsCurrent.forEach((element, index) => {
-                if (element.innerText === itemText)
+                if (element.innerText === itemText) {
+                  console.log(element);
+                  let tagWidth = getComputedStyle(element.parentElement).width;
+                  console.log(tagWidth);
+                  currentTagWidth -= parseInt(tagWidth);
                   element.parentElement.remove();
+                }
               });
 
               item.classList.toggle("selected");
@@ -209,32 +218,23 @@
     });
   };
 
-  const checkAndWrapTags = () => {
-    let exceeded = false; //by default
+  const checkAndWrapTags = (tag) => {
     let box = document.querySelector("#request_container .tag_box");
     let tagsSpan = document.querySelector("#request_container .tag_items");
     let tagItems = [...tagsSpan.children];
     let boxWidth = parseInt(getComputedStyle(box).width);
-    let currentWidth = 0;
 
-    tagItems.forEach((tag) => {
-      // console.log(tag, typeof tag);
-      let tagWidth = getComputedStyle(tag).width;
-      currentWidth += parseFloat(tagWidth);
-      console.log("tagWidth: ", tagWidth, typeof tagWidth);
-      console.log("currentWidth: ", currentWidth);
-    });
+    tagWidth = getComputedStyle(tag).width;
 
-    console.log("boxWidth: ", boxWidth);
-    console.log("getComputedStyle(box).width ", getComputedStyle(box).width);
-
-    if (currentWidth === NaN) {
-      exceeded = true;
+    if (tagWidth === "auto") {
+      return;
     } else {
-      exceeded = currentWidth >= (boxWidth / 100) * 80 - 60;
+      currentTagWidth += parseInt(tagWidth);
     }
 
-    if (exceeded) {
+    widthExceeded = currentTagWidth >= (boxWidth / 100) * 80;
+
+    if (widthExceeded) {
       //add last tag to it and increment the counter on limit span
       //check if limit span if empty
 
@@ -242,17 +242,13 @@
       let isEmpty = tagLimit.children.length === 0;
       isEmpty ? tagLimit.classList.remove("hidden") : "";
       let lastTag = tagItems.slice(-1)[0];
-      hiddenTags.push(lastTag);
-      console.log(lastTag);
+      hiddenTags.push(lastTag.children[0].innerText);
+
       lastTag.classList.add("hidden");
       tagLimit.innerText = "+" + hiddenTags.length + " ...";
-      console.log(hiddenTags);
     }
-
-    console.log(currentWidth, typeof currentWidth);
-    console.log("available width", (boxWidth / 100) * 80 - 60);
-    console.log(tagItems);
-    console.log(exceeded);
+    console.log("currentTags: ", currentTags);
+    console.log("hiddenTags: ", hiddenTags);
   };
 
   const tagHandler = (str) => {
@@ -290,9 +286,11 @@
         requestInput.click();
       });
 
-      //check if width is exceeded, wrap if true
+      //check if width is widthExceeded, wrap if true
 
-      checkAndWrapTags();
+      checkAndWrapTags(newTag);
+
+      console.log("currentWidth: ", currentTagWidth);
 
       //remove tag from box on click at X sign
 
