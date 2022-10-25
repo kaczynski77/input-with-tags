@@ -51,6 +51,7 @@
         renderDropdown(inputHandlerResult, "pre");
         //clear input
         requestInput.value = "";
+        tagHandler(currentValue.slice(0, -1));
         currentValue = "";
       }
       dropdownVisibility(focus, currentValue);
@@ -187,7 +188,7 @@
       }
     };
 
-    //generate items for dropdown
+    //generate items for dropdown list
 
     data.forEach((element, index) => {
       createItem(index, element, data);
@@ -216,10 +217,9 @@
 
   const tagHandler = (str) => {
     //new tag in input box from clicking on list item
-    // console.log("string: ", str);
-    // console.log("tags: ", currentTags);
+    //check if exists
     currentTags.includes(str) ? (notExists = false) : (notExists = true);
-    // console.log(notExists);
+    //build and render new if not
     if (notExists) {
       const selectTagSpan = document.querySelector(
         "#request_container .tag_items"
@@ -241,6 +241,15 @@
       selectTagSpan.append(newTag);
       currentTags.push(str);
 
+      /*handle direct click on tag (not on X),
+       make click on textearea instead.*/
+
+      tagText.addEventListener("mousedown", (event) => {
+        event.preventDefault();
+        const requestInput = document.querySelector("#id_location01");
+        requestInput.click();
+      });
+
       //check if width is exceeded
       let exceeded = false; //by default
       checkTagsWidth(exceeded);
@@ -258,6 +267,12 @@
         itemsArray.forEach((item) => {
           if (event.target.previousSibling.innerText === item.innerText)
             item.parentElement.classList.remove("selected");
+        });
+
+        //remove from currentTags array
+        currentTags.forEach((element, index) => {
+          if (element === str) currentTags.splice(index, 1);
+          console.log(currentTags);
         });
       });
     }
