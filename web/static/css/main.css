@@ -196,9 +196,9 @@ select {
   font-size: calc(var(--box-height) - 10px);
 }
 
-#request_container .tag_items span {
+#request_container .tag_items span,
+#request_container .tag_limit {
   padding-left: 5px;
-  padding-right: 25px;
   background-color: var(--lightgray);
   display: flex;
   align-items: center;
@@ -208,6 +208,14 @@ select {
   border-bottom: 1px solid white;
 }
 
+#request_container .tag_limit {
+  width: 100%;
+  max-width: 60px;
+}
+
+#request_container .tag_limit.hidden {
+  display: none;
+}
 #request_container .tag_items span .cross {
   content: "\00d7";
   margin-left: 5px;
@@ -216,6 +224,10 @@ select {
 }
 #request_container .tag_items span .tag_text {
   border: none;
+}
+
+#request_container .tag_items .tag.hidden {
+  display: none;
 }
 
 #dropdown .checkmark {

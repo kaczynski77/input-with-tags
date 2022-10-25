@@ -5,6 +5,7 @@
   let inputHandlerResult = [];
   let currentList = [];
   let currentTags = [];
+  let hiddenTags = [];
 
   const ajaxRequest = (url, method, data) => {
     return new Promise((resolve, reject) => {
@@ -39,22 +40,37 @@
       );
 
       currentValue = requestInput.value;
-      dropdownUserList.innerText = currentValue;
-
-      let lastChar = currentValue.slice(-1);
-      let delimeterFound =
-        lastChar === " " || lastChar === "," || lastChar === "\n";
-
-      if (delimeterFound) {
-        inputHandlerResult.pop();
-        inputHandlerResult.push(currentValue.slice(0, -1));
-        renderDropdown(inputHandlerResult, "pre");
-        //clear input
+      console.log();
+      console.log(currentValue.length);
+      //check if input value is delimeter and clear input
+      if (
+        currentValue === "\n" ||
+        currentValue === "," ||
+        currentValue === " "
+      ) {
         requestInput.value = "";
-        tagHandler(currentValue.slice(0, -1));
         currentValue = "";
+        return;
+      } else {
+        dropdownUserList.innerText = currentValue;
+        let lastChar = currentValue.slice(-1);
+        //check for delimeter at the end of input value
+        let delimeterFound =
+          lastChar === " " || lastChar === "," || lastChar === "\n";
+        // handle tag if found
+        if (delimeterFound) {
+          console.log(delimeterFound);
+          inputHandlerResult.pop();
+          inputHandlerResult.push(currentValue.slice(0, -1));
+          renderDropdown(inputHandlerResult, "pre");
+          //clear input
+          requestInput.value = "";
+          console.log(currentValue);
+          tagHandler(currentValue.slice(0, -1));
+          currentValue = "";
+        }
+        dropdownVisibility(focus, currentValue);
       }
-      dropdownVisibility(focus, currentValue);
     });
 
     //if user clicks on user_input dropdown part
@@ -193,7 +209,8 @@
     });
   };
 
-  const checkTagsWidth = (exceeded) => {
+  const checkAndWrapTags = () => {
+    let exceeded = false; //by default
     let box = document.querySelector("#request_container .tag_box");
     let tagsSpan = document.querySelector("#request_container .tag_items");
     let tagItems = [...tagsSpan.children];
@@ -203,14 +220,39 @@
     tagItems.forEach((tag) => {
       // console.log(tag, typeof tag);
       let tagWidth = getComputedStyle(tag).width;
-      currentWidth += parseInt(tagWidth.slice(0, -2));
+      currentWidth += parseFloat(tagWidth);
+      console.log("tagWidth: ", tagWidth, typeof tagWidth);
+      console.log("currentWidth: ", currentWidth);
     });
 
-    exceeded = currentWidth >= boxWidth * 0.8;
-    /*   console.log(currentWidth, typeof currentWidth);
-    console.log("available width", boxWidth * 0.8);
+    console.log("boxWidth: ", boxWidth);
+    console.log("getComputedStyle(box).width ", getComputedStyle(box).width);
+
+    if (currentWidth === NaN) {
+      exceeded = true;
+    } else {
+      exceeded = currentWidth >= (boxWidth / 100) * 80 - 60;
+    }
+
+    if (exceeded) {
+      //add last tag to it and increment the counter on limit span
+      //check if limit span if empty
+
+      const tagLimit = document.querySelector("#request_container .tag_limit");
+      let isEmpty = tagLimit.children.length === 0;
+      isEmpty ? tagLimit.classList.remove("hidden") : "";
+      let lastTag = tagItems.slice(-1)[0];
+      hiddenTags.push(lastTag);
+      console.log(lastTag);
+      lastTag.classList.add("hidden");
+      tagLimit.innerText = "+" + hiddenTags.length + " ...";
+      console.log(hiddenTags);
+    }
+
+    console.log(currentWidth, typeof currentWidth);
+    console.log("available width", (boxWidth / 100) * 80 - 60);
     console.log(tagItems);
-    console.log(exceeded); */
+    console.log(exceeded);
   };
 
   const tagHandler = (str) => {
@@ -248,9 +290,9 @@
         requestInput.click();
       });
 
-      //check if width is exceeded
-      let exceeded = false; //by default
-      checkTagsWidth(exceeded);
+      //check if width is exceeded, wrap if true
+
+      checkAndWrapTags();
 
       //remove tag from box on click at X sign
 
