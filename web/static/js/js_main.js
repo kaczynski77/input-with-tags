@@ -56,13 +56,28 @@
       dropdownVisibility(focus, currentValue);
     });
 
-    //if focused paint the box borders, repaint back on focusout
+    //if user clicks on user_input dropdown part
+
+    const userInput = document.querySelector("#dropdown .user_input span");
+    userInput.addEventListener("mousedown", (event) => {
+      event.preventDefault();
+      inputHandlerResult.pop();
+      inputHandlerResult.push(currentValue);
+      renderDropdown(inputHandlerResult, "pre");
+      //clear input
+      requestInput.value = "";
+      currentValue = "";
+      console.log(event.target);
+      tagHandler(event.target.innerText);
+      dropdownVisibility(focus);
+    });
+
+    /*if focused paint the box borders, repaint back on blur
+      + handle visibility of dropdown  */
 
     const border = document.querySelector(
       "#request_container span .border_box"
     );
-
-    const dropdown = document.querySelector("#dropdown");
 
     requestInput.addEventListener("focus", (event) => {
       border.style.border = "1px solid var(--blue)";
@@ -71,13 +86,14 @@
     });
 
     requestInput.addEventListener("blur", (event) => {
+      border.style.border = "";
       focus = false;
       dropdownVisibility(focus);
     });
   };
 
-  //show/hide dropdown list
   const dropdownVisibility = (focus, inputValue) => {
+    //show/hide dropdown list
     const dropdownList = document.querySelector("#dropdown .list");
     const dropdownUserList = document.querySelector("#dropdown .user_input");
 
@@ -129,16 +145,18 @@
         const itemsClickHandler = (item) => {
           item.addEventListener("mousedown", function (event) {
             event.preventDefault();
-            //focus on input when item clicked
-            const requestInput = document.querySelector("#id_location01");
-            requestInput.click();
-            //mark as selected
-            let noCheckmark = event.target.children.length === 0;
-            noCheckmark ? item.append(checkmark) : "";
-            event.currentTarget.classList.toggle("selected");
 
-            console.log(event.currentTarget.innerText);
-            tagHandler(event.currentTarget.innerText);
+            if (event.target.classList === "selected") {
+            } else {
+              //focus on input when item clicked
+              const requestInput = document.querySelector("#id_location01");
+              requestInput.click();
+              //mark as selected
+              let noCheckmark = event.target.children.length === 0;
+              noCheckmark ? item.append(checkmark) : "";
+              event.currentTarget.classList.toggle("selected");
+              tagHandler(event.currentTarget.innerText);
+            }
           });
         };
 
@@ -168,15 +186,16 @@
     });
 
     exceeded = currentWidth >= boxWidth * 0.8;
-    /*  console.log(currentWidth, typeof currentWidth);
+    /*   console.log(currentWidth, typeof currentWidth);
     console.log("available width", boxWidth * 0.8);
     console.log(tagItems);
     console.log(exceeded); */
   };
 
-  //new tag in input box from clicking on list item
   const tagHandler = (str) => {
-    console.log(str);
+    //new tag in input box from clicking on list item
+    console.log("string: ", str);
+    console.log("tags: ", currentTags);
     currentTags.includes(str) ? (notExists = false) : (notExists = true);
     console.log(notExists);
     if (notExists) {
@@ -198,19 +217,16 @@
       newTag.append(cross);
 
       selectTagSpan.append(newTag);
-      currentTags.push(newTag);
+      currentTags.push(str);
 
       //check if width is exceeded
       let exceeded = false; //by default
       checkTagsWidth(exceeded);
 
-      //find tag, remove from array and from list
-
-      const tagRemove = () => {};
-
       //remove tag from box on click at X sign
 
-      cross.addEventListener("click", (event) => {
+      cross.addEventListener("mousedown", (event) => {
+        event.preventDefault();
         event.currentTarget.parentElement.remove();
         //find selected row in list and remove 'selected' class
         const selectListItems = document.querySelectorAll(
@@ -222,8 +238,6 @@
             item.parentElement.classList.remove("selected");
         });
       });
-    } else {
-      currentTags;
     }
   };
 

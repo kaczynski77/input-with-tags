@@ -138,6 +138,7 @@ select {
   line-height: var(--box-height);
   height: var(--box-height);
   width: 100%;
+  overflow: hidden;
   resize: none;
 }
 #id_request {
