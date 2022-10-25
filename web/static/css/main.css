@@ -196,28 +196,29 @@ select {
   font-size: calc(var(--box-height) - 10px);
 }
 
-.tag_items span {
+#request_container .tag_items span {
   padding-left: 5px;
   padding-right: 25px;
   background-color: var(--lightgray);
-
   display: flex;
   align-items: center;
   padding-right: 5px;
   border-radius: 10px;
+  border-top: 1px solid white;
+  border-bottom: 1px solid white;
 }
 
-.tag_items span .cross {
+#request_container .tag_items span .cross {
   content: "\00d7";
   margin-left: 5px;
   color: var(--darkgray);
   border: none;
 }
-.tag_items span .tag_text {
+#request_container .tag_items span .tag_text {
   border: none;
 }
 
-.checkmark {
+#dropdown .checkmark {
   pointer-events: none;
 }
 

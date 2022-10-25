@@ -152,12 +152,11 @@
             event.preventDefault();
 
             isSelected = item.classList[0] === "selected";
-            console.log("isSelected: ", isSelected);
+
             if (isSelected) {
               //remove from currentTags array
               currentTags.forEach((element, index) => {
                 if (element === itemText) currentTags.splice(index, 1);
-                console.log(currentTags);
               });
               //remove tag from box
               const tagsTextsInitial = document.querySelectorAll(".tag_text");
@@ -166,7 +165,6 @@
               tagsTextsCurrent.forEach((element, index) => {
                 if (element.innerText === itemText)
                   element.parentElement.remove();
-                console.log("tag " + element + " removed");
               });
 
               item.classList.toggle("selected");
@@ -272,7 +270,6 @@
         //remove from currentTags array
         currentTags.forEach((element, index) => {
           if (element === str) currentTags.splice(index, 1);
-          console.log(currentTags);
         });
       });
     }
