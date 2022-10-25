@@ -67,7 +67,6 @@
       //clear input
       requestInput.value = "";
       currentValue = "";
-      console.log(event.target);
       tagHandler(event.target.innerText);
       dropdownVisibility(focus);
     });
@@ -139,14 +138,37 @@
         newItem.append(itemText);
         selectList.append(newItem);
 
-        if (param === "pre") selectList.prepend(newItem);
+        if (param === "pre") {
+          newItem.append(checkmark);
+          selectList.prepend(newItem);
+          newItem.classList.add("selected");
+        }
 
         //handle clicks on items
         const itemsClickHandler = (item) => {
+          let itemText = item.innerText;
           item.addEventListener("mousedown", function (event) {
             event.preventDefault();
 
-            if (event.target.classList === "selected") {
+            isSelected = item.classList[0] === "selected";
+            console.log("isSelected: ", isSelected);
+            if (isSelected) {
+              //remove from currentTags array
+              currentTags.forEach((element, index) => {
+                if (element === itemText) currentTags.splice(index, 1);
+                console.log(currentTags);
+              });
+              //remove tag from box
+              const tagsTextsInitial = document.querySelectorAll(".tag_text");
+              const tagsTextsCurrent = [...tagsTextsInitial];
+
+              tagsTextsCurrent.forEach((element, index) => {
+                if (element.innerText === itemText)
+                  element.parentElement.remove();
+                console.log("tag " + element + " removed");
+              });
+
+              item.classList.toggle("selected");
             } else {
               //focus on input when item clicked
               const requestInput = document.querySelector("#id_location01");
@@ -154,8 +176,8 @@
               //mark as selected
               let noCheckmark = event.target.children.length === 0;
               noCheckmark ? item.append(checkmark) : "";
-              event.currentTarget.classList.toggle("selected");
-              tagHandler(event.currentTarget.innerText);
+              item.classList.toggle("selected");
+              tagHandler(item.innerText);
             }
           });
         };
@@ -180,7 +202,7 @@
     let currentWidth = 0;
 
     tagItems.forEach((tag) => {
-      console.log(tag, typeof tag);
+      // console.log(tag, typeof tag);
       let tagWidth = getComputedStyle(tag).width;
       currentWidth += parseInt(tagWidth.slice(0, -2));
     });
@@ -194,10 +216,10 @@
 
   const tagHandler = (str) => {
     //new tag in input box from clicking on list item
-    console.log("string: ", str);
-    console.log("tags: ", currentTags);
+    // console.log("string: ", str);
+    // console.log("tags: ", currentTags);
     currentTags.includes(str) ? (notExists = false) : (notExists = true);
-    console.log(notExists);
+    // console.log(notExists);
     if (notExists) {
       const selectTagSpan = document.querySelector(
         "#request_container .tag_items"
