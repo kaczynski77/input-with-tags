@@ -174,23 +174,23 @@
               currentTags.forEach((element, index) => {
                 if (element === itemText) currentTags.splice(index, 1);
               });
-              hiddenTags.forEach((element, index) => {
-                if (element === itemText) hiddenTags.splice(index, 1);
-              });
+              // hiddenTags.forEach((element, index) => {
+              //   if (element === itemText) hiddenTags.splice(index, 1);
+              // });
 
-              //remove tag from box
+              //remove tag from box, adjust currentTagWidth
               const tagsTextsInitial = document.querySelectorAll(".tag_text");
               const tagsTextsCurrent = [...tagsTextsInitial];
 
               tagsTextsCurrent.forEach((element, index) => {
                 if (element.innerText === itemText) {
-                  console.log(element);
                   let tagWidth = getComputedStyle(element.parentElement).width;
-                  console.log(tagWidth);
                   currentTagWidth -= parseInt(tagWidth);
                   element.parentElement.remove();
                 }
               });
+
+              handleHiddenTags();
 
               item.classList.toggle("selected");
             } else {
@@ -219,9 +219,9 @@
   };
 
   const checkAndWrapTags = (tag) => {
-    let box = document.querySelector("#request_container .tag_box");
-    let tagsSpan = document.querySelector("#request_container .tag_items");
-    let tagItems = [...tagsSpan.children];
+    const box = document.querySelector("#request_container .tag_box");
+    const tagsSpan = document.querySelector("#request_container .tag_items");
+    const tagItems = [...tagsSpan.children];
     let boxWidth = parseInt(getComputedStyle(box).width);
 
     tagWidth = getComputedStyle(tag).width;
@@ -235,7 +235,7 @@
     widthExceeded = currentTagWidth >= (boxWidth / 100) * 80;
 
     if (widthExceeded) {
-      //add last tag to it and increment the counter on limit span
+      //hide, element increment the counter on limit span
       //check if limit span if empty
 
       const tagLimit = document.querySelector("#request_container .tag_limit");
@@ -249,6 +249,27 @@
     }
     console.log("currentTags: ", currentTags);
     console.log("hiddenTags: ", hiddenTags);
+  };
+
+  const handleHiddenTags = () => {
+    //check if any tags are hidden, show if there is a space,
+    //decrease hidden tag counter
+    const selectHiddenTags = document.querySelectorAll(".tag.hidden");
+
+    const selectTagLimit = document.querySelector(".tag_limit");
+    if (hiddenTags.length > 1) {
+      console.log("hiddenTags.length:", hiddenTags.length);
+      let newCounterValue =
+        selectTagLimit.innerText.split("+")[1].split(" ")[0] - 1;
+      selectTagLimit.innerText = "+" + newCounterValue + " ...";
+      selectHiddenTags[0].classList.remove("hidden");
+    } else if (hiddenTags.length === 1) {
+      selectHiddenTags[0].classList.remove("hidden");
+      selectTagLimit.classList.add("hidden");
+    }
+    hiddenTags.pop();
+    console.log(selectHiddenTags, "selectHiddenTags");
+    console.log(hiddenTags);
   };
 
   const tagHandler = (str) => {
@@ -295,6 +316,9 @@
       //remove tag from box on click at X sign
 
       cross.addEventListener("mousedown", (event) => {
+        let tag = event.currentTarget.parentElement;
+        let tagWidth = getComputedStyle(tag).width;
+        currentTagWidth -= parseInt(tagWidth);
         event.preventDefault();
         event.currentTarget.parentElement.remove();
         //find selected row in list and remove 'selected' class
@@ -311,6 +335,8 @@
         currentTags.forEach((element, index) => {
           if (element === str) currentTags.splice(index, 1);
         });
+
+        handleHiddenTags();
       });
     }
   };
