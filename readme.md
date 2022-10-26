@@ -28,7 +28,7 @@ features:
           • while user's input, initial list is hidden is hidden and row with current user input is shown
           • if user tries to enter tag that is already in list, input becomes cleared
           • if user tries to press enter/space or enter comma , input becomes cleared
-          • calculating available space in input box based on rendered elements
+          • calculating available space for tags in input box based on rendered elements
           • hide tags if there is no space in the input box while adding, show amount of hidden
           • reveal hidden tags if some were removed
           • dropdown visibility based on user focus
