@@ -247,8 +247,6 @@
       lastTag.classList.add("hidden");
       tagLimit.innerText = "+" + hiddenTags.length + " ...";
     }
-    console.log("currentTags: ", currentTags);
-    console.log("hiddenTags: ", hiddenTags);
   };
 
   const handleHiddenTags = () => {
@@ -258,7 +256,6 @@
 
     const selectTagLimit = document.querySelector(".tag_limit");
     if (hiddenTags.length > 1) {
-      console.log("hiddenTags.length:", hiddenTags.length);
       let newCounterValue =
         selectTagLimit.innerText.split("+")[1].split(" ")[0] - 1;
       selectTagLimit.innerText = "+" + newCounterValue + " ...";
@@ -268,8 +265,6 @@
       selectTagLimit.classList.add("hidden");
     }
     hiddenTags.pop();
-    console.log(selectHiddenTags, "selectHiddenTags");
-    console.log(hiddenTags);
   };
 
   const tagHandler = (str) => {
@@ -310,8 +305,6 @@
       //check if width is widthExceeded, wrap if true
 
       checkAndWrapTags(newTag);
-
-      console.log("currentWidth: ", currentTagWidth);
 
       //remove tag from box on click at X sign
 
