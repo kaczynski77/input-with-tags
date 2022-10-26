@@ -33,11 +33,11 @@
   const inputHandler = (inputHandlerResult) => {
     let focus = true;
     let currentValue = "";
-    const requestInput = document.getElementById("id_location01");
+    let requestInput = document.getElementById("id_location01");
 
     //find delimeter and clear input
     requestInput.addEventListener("input", (event) => {
-      const dropdownUserList = document.querySelector(
+      let dropdownUserList = document.querySelector(
         "#dropdown .user_input span"
       );
 
@@ -75,7 +75,7 @@
 
     //if user clicks on user_input dropdown part
 
-    const userInput = document.querySelector("#dropdown .user_input span");
+    let userInput = document.querySelector("#dropdown .user_input span");
     userInput.addEventListener("mousedown", (event) => {
       event.preventDefault();
       inputHandlerResult.pop();
@@ -91,9 +91,7 @@
     /*if focused paint the box borders, repaint back on blur
       + handle visibility of dropdown  */
 
-    const border = document.querySelector(
-      "#request_container span .border_box"
-    );
+    let border = document.querySelector("#request_container span .border_box");
 
     requestInput.addEventListener("focus", (event) => {
       border.style.border = "1px solid var(--blue)";
@@ -110,8 +108,8 @@
 
   const dropdownVisibility = (focus, inputValue) => {
     //show/hide dropdown list
-    const dropdownList = document.querySelector("#dropdown .list");
-    const dropdownUserList = document.querySelector("#dropdown .user_input");
+    let dropdownList = document.querySelector("#dropdown .list");
+    let dropdownUserList = document.querySelector("#dropdown .user_input");
 
     if (focus) {
       if (inputValue !== undefined && inputValue.length > 0) {
@@ -128,7 +126,7 @@
   };
 
   const renderDropdown = (data, param) => {
-    const selectList = document.querySelector("#dropdown .list");
+    let selectList = document.querySelector("#dropdown .list");
     //selectList.innerHTML = "";
 
     const createItem = (index, element, input) => {
@@ -162,7 +160,7 @@
         }
 
         //handle clicks on items
-        const itemsClickHandler = (item) => {
+        let itemsClickHandler = (item) => {
           let itemText = item.innerText;
           item.addEventListener("mousedown", function (event) {
             event.preventDefault();
@@ -178,24 +176,21 @@
               //   if (element === itemText) hiddenTags.splice(index, 1);
               // });
 
-              //remove tag from box, adjust currentTagWidth
-              const tagsTextsInitial = document.querySelectorAll(".tag_text");
-              const tagsTextsCurrent = [...tagsTextsInitial];
+              //remove selected
+              let tagsTextsInitial = document.querySelectorAll(".tag_text");
+              let tagsTextsCurrent = [...tagsTextsInitial];
 
               tagsTextsCurrent.forEach((element, index) => {
                 if (element.innerText === itemText) {
-                  let tagWidth = getComputedStyle(element.parentElement).width;
-                  currentTagWidth -= parseInt(tagWidth);
+                  wrapHandler(element.parentElement, "remove");
                   element.parentElement.remove();
                 }
               });
 
-              handleHiddenTags();
-
               item.classList.toggle("selected");
             } else {
               //focus on input when item clicked
-              const requestInput = document.querySelector("#id_location01");
+              let requestInput = document.querySelector("#id_location01");
               requestInput.click();
               //mark as selected
               let noCheckmark = event.target.children.length === 0;
@@ -218,53 +213,97 @@
     });
   };
 
-  const checkAndWrapTags = (tag) => {
-    const box = document.querySelector("#request_container .tag_box");
-    const tagsSpan = document.querySelector("#request_container .tag_items");
-    const tagItems = [...tagsSpan.children];
+  const wrapHandler = (tag, param) => {
+    console.log("wrapHandler input: " + tag);
+    let box = document.querySelector("#request_container .tag_box");
+    let tagsSpan = document.querySelector("#request_container .tag_items");
+    let tagItems = [...tagsSpan.children];
+    let tagLimit = document.querySelector("#request_container .tag_limit");
+    let selectHiddenTags = document.querySelectorAll(".tag.hidden");
     let boxWidth = parseInt(getComputedStyle(box).width);
+    let tagWidth = parseInt(getComputedStyle(tag).width);
 
-    tagWidth = getComputedStyle(tag).width;
+    console.log(tagWidth, "param: " + param);
 
     if (tagWidth === "auto") {
-      return;
-    } else {
-      currentTagWidth += parseInt(tagWidth);
+      console.log(tagWidth + " is auto");
+      hiddenTags.forEach((element, index) => {
+        console.log(element);
+        element.forEach((innerElement, i) => {
+          /* console.log(
+            innerElement,
+            i,
+            selectHiddenTags[0].children[0].innertext
+          ); */
+          if (innerElement === tag.children[0].innerText) {
+            console.log(innerElement, i);
+            tagWidth = element[1];
+            console.log(tagWidth);
+          }
+        });
+      });
     }
 
-    widthExceeded = currentTagWidth >= (boxWidth / 100) * 80;
+    param === "remove"
+      ? (currentTagWidth -= tagWidth)
+      : (currentTagWidth += tagWidth);
+
+    /*     console.log(currentTagWidth);
+    console.log(widthExceeded);
+    console.log(hiddenTags); */
+    widthExceeded = currentTagWidth >= (boxWidth / 100) * 80 - 60;
 
     if (widthExceeded) {
-      //hide, element increment the counter on limit span
-      //check if limit span if empty
+      //compensate currentTagWith
+      currentTagWidth -= tagWidth;
 
-      const tagLimit = document.querySelector("#request_container .tag_limit");
+      console.log(widthExceeded + "widthExceeded");
+      //hide, last added  element increment the counter on limit span
+
+      //if limit span is empty, fill it. Update counter
+
       let isEmpty = tagLimit.children.length === 0;
       isEmpty ? tagLimit.classList.remove("hidden") : "";
       let lastTag = tagItems.slice(-1)[0];
-      hiddenTags.push(lastTag.children[0].innerText);
+
+      if (param !== "remove") {
+        let preparedPush = [lastTag.children[0].innerText, tagWidth];
+        hiddenTags.push(preparedPush);
+        console.log(
+          "pushing to hidden: " + lastTag.children[0].innerText,
+          "width: " + tagWidth
+        );
+      }
 
       lastTag.classList.add("hidden");
       tagLimit.innerText = "+" + hiddenTags.length + " ...";
-    }
-  };
+    } else {
+      let spaceAvailable = boxWidth - currentTagWidth;
 
-  const handleHiddenTags = () => {
-    //check if any tags are hidden, show if there is a space,
-    //decrease hidden tag counter
-    const selectHiddenTags = document.querySelectorAll(".tag.hidden");
-
-    const selectTagLimit = document.querySelector(".tag_limit");
-    if (hiddenTags.length > 1) {
-      let newCounterValue =
-        selectTagLimit.innerText.split("+")[1].split(" ")[0] - 1;
-      selectTagLimit.innerText = "+" + newCounterValue + " ...";
-      selectHiddenTags[0].classList.remove("hidden");
-    } else if (hiddenTags.length === 1) {
-      selectHiddenTags[0].classList.remove("hidden");
-      selectTagLimit.classList.add("hidden");
+      console.log("space available: " + spaceAvailable + " of " + boxWidth);
+      if (hiddenTags.length > 0) {
+        let firstHiddenWidth = hiddenTags[0][1];
+        console.log("hiddenTagArray: " + hiddenTags);
+        console.log(
+          "getting width of first hidden element: " + firstHiddenWidth
+        );
+        console.log(
+          "space available > width of element: ",
+          spaceAvailable > firstHiddenWidth
+        );
+        console.log("try to reveal if true");
+        let selectHiddenTags = document.querySelectorAll(".tag.hidden");
+        let firstHiddenTag = selectHiddenTags[0];
+        console.log("reveal target ", firstHiddenTag);
+        firstHiddenTag.classList.remove("hidden");
+        //remove first element from hiddenTags array
+        hiddenTags.shift();
+        tagLimit.innerText = "+" + hiddenTags.length + " ...";
+      }
     }
-    hiddenTags.pop();
+    console.log(currentTagWidth);
+    console.log("currently " + hiddenTags.length + " are hidden");
+    if (hiddenTags.length === 0) tagLimit.classList.add("hidden");
   };
 
   const tagHandler = (str) => {
@@ -273,7 +312,7 @@
     currentTags.includes(str) ? (notExists = false) : (notExists = true);
     //build and render new if not
     if (notExists) {
-      const selectTagSpan = document.querySelector(
+      let selectTagSpan = document.querySelector(
         "#request_container .tag_items"
       );
 
@@ -298,27 +337,26 @@
 
       tagText.addEventListener("mousedown", (event) => {
         event.preventDefault();
-        const requestInput = document.querySelector("#id_location01");
+        let requestInput = document.querySelector("#id_location01");
         requestInput.click();
       });
 
       //check if width is widthExceeded, wrap if true
 
-      checkAndWrapTags(newTag);
+      wrapHandler(newTag);
 
       //remove tag from box on click at X sign
 
       cross.addEventListener("mousedown", (event) => {
         let tag = event.currentTarget.parentElement;
-        let tagWidth = getComputedStyle(tag).width;
-        currentTagWidth -= parseInt(tagWidth);
         event.preventDefault();
+        console.log(hiddenTags);
+        wrapHandler(tag, "remove");
         event.currentTarget.parentElement.remove();
+
         //find selected row in list and remove 'selected' class
-        const selectListItems = document.querySelectorAll(
-          "#dropdown .list_text"
-        );
-        const itemsArray = [...selectListItems];
+        let selectListItems = document.querySelectorAll("#dropdown .list_text");
+        let itemsArray = [...selectListItems];
         itemsArray.forEach((item) => {
           if (event.target.previousSibling.innerText === item.innerText)
             item.parentElement.classList.remove("selected");
@@ -328,8 +366,6 @@
         currentTags.forEach((element, index) => {
           if (element === str) currentTags.splice(index, 1);
         });
-
-        handleHiddenTags();
       });
     }
   };
