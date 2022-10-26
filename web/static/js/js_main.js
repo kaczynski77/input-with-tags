@@ -7,6 +7,7 @@
   let currentTags = [];
   let hiddenTags = [];
   let currentTagWidth = 0;
+  let spaceAvailable = 0;
   let widthExceeded = false;
 
   const ajaxRequest = (url, method, data) => {
@@ -222,6 +223,7 @@
     let selectHiddenTags = document.querySelectorAll(".tag.hidden");
     let boxWidth = parseInt(getComputedStyle(box).width);
     let tagWidth = parseInt(getComputedStyle(tag).width);
+    let maxWidth = (boxWidth / 100) * 80 - 60;
 
     console.log(tagWidth, "param: " + param);
 
@@ -244,18 +246,24 @@
       });
     }
 
-    param === "remove"
-      ? (currentTagWidth -= tagWidth)
-      : (currentTagWidth += tagWidth);
+    //
+
+    if (param === "remove" && currentTagWidth > 0) {
+      currentTagWidth -= tagWidth;
+    } else {
+      currentTagWidth += tagWidth;
+    }
 
     /*     console.log(currentTagWidth);
     console.log(widthExceeded);
     console.log(hiddenTags); */
-    widthExceeded = currentTagWidth >= (boxWidth / 100) * 80 - 60;
+    widthExceeded = currentTagWidth >= maxWidth;
 
     if (widthExceeded) {
-      //compensate currentTagWith
-      currentTagWidth -= tagWidth;
+      //compensate currentTagWith if greater than 0
+      if (currentTagWidth > 0) {
+        currentTagWidth -= tagWidth;
+      }
 
       console.log(widthExceeded + "widthExceeded");
       //hide, last added  element increment the counter on limit span
@@ -278,11 +286,43 @@
       lastTag.classList.add("hidden");
       tagLimit.innerText = "+" + hiddenTags.length + " ...";
     } else {
-      let spaceAvailable = boxWidth - currentTagWidth;
+      spaceAvailable = maxWidth - currentTagWidth;
 
-      console.log("space available: " + spaceAvailable + " of " + boxWidth);
       if (hiddenTags.length > 0) {
-        let firstHiddenWidth = hiddenTags[0][1];
+        for (let i = 1; i < 3; i++) {
+          console.log("----------\nLoopstart\n----------");
+          console.log("space available: " + spaceAvailable + " of " + boxWidth);
+          let [hiddenTag] = hiddenTags;
+
+          if (hiddenTags.length !== 0) {
+            if (spaceAvailable > hiddenTag[1]) {
+              console.log("hiddenTagArray: " + hiddenTags);
+              console.log(
+                "getting width of first hidden element: " + hiddenTag[1]
+              );
+              console.log(
+                "space available > width of element: ",
+                spaceAvailable > hiddenTag[1]
+              );
+              console.log("try to reveal if true");
+              let selectHiddenTags = document.querySelectorAll(".tag.hidden");
+              let firstHiddenTag = selectHiddenTags[0];
+              console.log("reveal target ", firstHiddenTag);
+              firstHiddenTag.classList.remove("hidden");
+              //remove first element from hiddenTags array
+              hiddenTags.shift();
+              tagLimit.innerText = "+" + hiddenTags.length + " ...";
+              console.log("remaining space: " + spaceAvailable);
+              currentTagWidth += hiddenTag[1];
+            } else {
+              tagLimit.classList.add("hidden");
+              return;
+            }
+          }
+          console.log("----------\nLoopend\n----------");
+        }
+
+        /*  let firstHiddenWidth = hiddenTags[0][1];
         console.log("hiddenTagArray: " + hiddenTags);
         console.log(
           "getting width of first hidden element: " + firstHiddenWidth
@@ -298,7 +338,7 @@
         firstHiddenTag.classList.remove("hidden");
         //remove first element from hiddenTags array
         hiddenTags.shift();
-        tagLimit.innerText = "+" + hiddenTags.length + " ...";
+        tagLimit.innerText = "+" + hiddenTags.length + " ..."; */
       }
     }
     console.log(currentTagWidth);
