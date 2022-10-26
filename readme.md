@@ -7,9 +7,9 @@ pip install -r requirements.txt
 pip install --force-reinstall -r requirements.txt
 ```
 
-```
+
 ### Description
-```
+
 Tag input written in pure JS for pre-interview
 
 features:
