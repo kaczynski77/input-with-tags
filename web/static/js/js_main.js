@@ -230,7 +230,6 @@
   };
 
   const wrapHandler = (tag, param) => {
-    console.log("wrapHandler input: " + tag);
     let box = document.querySelector("#request_container .tag_box");
     let tagsSpan = document.querySelector("#request_container .tag_items");
     let tagItems = [...tagsSpan.children];
@@ -253,39 +252,16 @@
     mediaQuery();
 
     if (isNaN(tagWidth)) {
-      console.log("try to search in hidden tags array for value");
       hiddenTags.forEach((element) => {
-        console.log("hiddenTag element", element);
-
         if (tag.children[0].innerText === element[0]) tagWidth = element[1];
-        console.log(
-          tagWidth,
-          "is set for tagWidth",
-          "tag",
-          tag.children[0].innerText
-        );
       });
     }
-    //mobile 65%
-    //desktop 80%
-
-    console.log("maxWidth", maxWidth);
-    console.log(tag, tagWidth, "param: " + param);
 
     if (tagWidth === "auto") {
-      console.log(tagWidth + " is auto");
       hiddenTags.forEach((element, index) => {
-        console.log(element);
         element.forEach((innerElement, i) => {
-          /* console.log(
-            innerElement,
-            i,
-            selectHiddenTags[0].children[0].innertext
-          ); */
           if (innerElement === tag.children[0].innerText) {
-            console.log(innerElement, i);
             tagWidth = element[1];
-            console.log(tagWidth);
           }
         });
       });
@@ -307,7 +283,6 @@
         currentTagWidth -= tagWidth;
       }
 
-      console.log(widthExceeded + "widthExceeded");
       //hide, last added  element increment the counter on limit span
 
       //if limit span is empty, fill it. Update counter
@@ -319,10 +294,6 @@
       if (param !== "remove") {
         let preparedPush = [lastTag.children[0].innerText, tagWidth];
         hiddenTags.push(preparedPush);
-        console.log(
-          "pushing to hidden: " + lastTag.children[0].innerText,
-          "width: " + tagWidth
-        );
       }
 
       lastTag.classList.add("hidden");
@@ -332,30 +303,18 @@
 
       if (hiddenTags.length > 0) {
         for (let i = 1; i < 3; i++) {
-          console.log("----------\nLoopstart\n----------");
-          console.log("space available: " + spaceAvailable + " of " + boxWidth);
           let [hiddenTag] = hiddenTags;
 
           if (hiddenTags.length !== 0) {
             if (spaceAvailable > hiddenTag[1]) {
-              console.log("hiddenTagArray: " + hiddenTags);
-              console.log(
-                "getting width of first hidden element: " + hiddenTag[1]
-              );
-              console.log(
-                "space available > width of element: ",
-                spaceAvailable > hiddenTag[1]
-              );
-              console.log("try to reveal if true");
               let selectHiddenTags = document.querySelectorAll(".tag.hidden");
               let firstHiddenTag = selectHiddenTags[0];
               if (firstHiddenTag !== undefined) {
-                console.log("reveal target ", firstHiddenTag);
                 firstHiddenTag.classList.remove("hidden");
                 //remove first element from hiddenTags array
                 hiddenTags.shift();
                 tagLimit.innerText = "+" + hiddenTags.length + " ...";
-                console.log("remaining space: " + spaceAvailable);
+
                 //adjust currentTagWidth
                 currentTagWidth += hiddenTag[1];
               } else {
@@ -368,12 +327,10 @@
             //hide limit span if nothing to reveal
             tagLimit.classList.add("hidden");
           }
-          console.log("----------\nLoopend\n----------");
         }
       }
     }
-    console.log(currentTagWidth);
-    console.log("currently " + hiddenTags.length + " are hidden");
+
     if (hiddenTags.length === 0) tagLimit.classList.add("hidden");
     //setWidthForTags(currentTagWidth);
   };
@@ -422,7 +379,7 @@
       cross.addEventListener("mousedown", (event) => {
         let tag = event.currentTarget.parentElement;
         event.preventDefault();
-        console.log(hiddenTags);
+
         wrapHandler(tag, "remove");
         event.currentTarget.parentElement.remove();
 
