@@ -185,15 +185,9 @@ select {
 
 #request_container .tag_items {
   display: flex;
-  width: fit-content;
   max-width: 80%;
   margin-left: 6px;
-  min-height: 0;
-  align-items: center;
-}
-
-#request_container * {
-  font-size: calc(var(--box-height) - 10px);
+  height: 100%;
 }
 
 #request_container .tag_items span,
@@ -206,11 +200,14 @@ select {
   border-radius: 10px;
   border-top: 1px solid white;
   border-bottom: 1px solid white;
+  justify-content: center;
 }
 
 #request_container .tag_limit {
   width: 100%;
+  min-width: 30px;
   max-width: 60px;
+  height: 100%;
 }
 
 #request_container .tag_limit.hidden {
@@ -218,7 +215,7 @@ select {
 }
 #request_container .tag_items span .cross {
   content: "\00d7";
-  margin-left: 5px;
+
   color: var(--darkgray);
   border: none;
 }
@@ -240,4 +237,29 @@ button {
   -webkit-box-shadow: 0px 2px 5px 1px rgba(34, 60, 80, 0.2);
   -moz-box-shadow: 0px 2px 5px 1px rgba(34, 60, 80, 0.2);
   box-shadow: 0px 2px 5px 1px rgba(34, 60, 80, 0.2);
+}
+
+#request_container * {
+  font-size: calc(var(--box-height) - 10px);
+}
+
+@media screen and (max-width: 700px) {
+  #request_container * {
+    font-size: calc(var(--box-height) - 14px);
+  }
+  #request_container .tag_items span,
+  #request_container .tag_limit {
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+  #request_container .tag_limit {
+    padding-left: 2px;
+    padding-right: 2px;
+    max-width: 40px;
+  }
+  #request_container button {
+    font-size: calc(var(--box-height) - 14px);
+    margin-left: 5px;
+    padding-left: 3px;
+  }
 }

@@ -10,6 +10,21 @@
   let spaceAvailable = 0;
   let widthExceeded = false;
 
+  const formHandler = () => {
+    submitButton = document.querySelector("#request_container button");
+    submitButton.addEventListener("click", (event) => {
+      //event.preventDefault();
+      let requestInput = document.querySelector("#id_request");
+      let requestTextarea = document.querySelector("#id_location01");
+
+      requestTextarea.value = new Date().toLocaleString();
+      requestTextarea.style.color = "white";
+      currentTags.forEach((element) => {
+        requestInput.value += element + ", ";
+      });
+    });
+  };
+
   const ajaxRequest = (url, method, data) => {
     return new Promise((resolve, reject) => {
       let request = new XMLHttpRequest();
@@ -34,15 +49,15 @@
   const inputHandler = (inputHandlerResult) => {
     let focus = true;
     let currentValue = "";
-    let requestInput = document.getElementById("id_location01");
+    let requestTextarea = document.getElementById("id_location01");
 
     //find delimeter and clear input
-    requestInput.addEventListener("input", (event) => {
+    requestTextarea.addEventListener("input", (event) => {
       let dropdownUserList = document.querySelector(
         "#dropdown .user_input span"
       );
 
-      currentValue = requestInput.value;
+      currentValue = requestTextarea.value;
 
       //check if input value is delimeter and clear input
       if (
@@ -50,7 +65,7 @@
         currentValue === "," ||
         currentValue === " "
       ) {
-        requestInput.value = "";
+        requestTextarea.value = "";
         currentValue = "";
         return;
       } else {
@@ -65,7 +80,7 @@
           inputHandlerResult.push(currentValue.slice(0, -1));
           renderDropdown(inputHandlerResult, "pre");
           //clear input
-          requestInput.value = "";
+          requestTextarea.value = "";
 
           tagHandler(currentValue.slice(0, -1));
           currentValue = "";
@@ -83,7 +98,7 @@
       inputHandlerResult.push(currentValue);
       renderDropdown(inputHandlerResult, "pre");
       //clear input
-      requestInput.value = "";
+      requestTextarea.value = "";
       currentValue = "";
       tagHandler(event.target.innerText);
       dropdownVisibility(focus);
@@ -94,13 +109,13 @@
 
     let border = document.querySelector("#request_container span .border_box");
 
-    requestInput.addEventListener("focus", (event) => {
+    requestTextarea.addEventListener("focus", (event) => {
       border.style.border = "1px solid var(--blue)";
       focus = true;
       dropdownVisibility(focus);
     });
 
-    requestInput.addEventListener("blur", (event) => {
+    requestTextarea.addEventListener("blur", (event) => {
       border.style.border = "";
       focus = false;
       dropdownVisibility(focus);
@@ -191,8 +206,8 @@
               item.classList.toggle("selected");
             } else {
               //focus on input when item clicked
-              let requestInput = document.querySelector("#id_location01");
-              requestInput.click();
+              let requestTextarea = document.querySelector("#id_location01");
+              requestTextarea.click();
               //mark as selected
               let noCheckmark = event.target.children.length === 0;
               noCheckmark ? item.append(checkmark) : "";
@@ -223,9 +238,39 @@
     let selectHiddenTags = document.querySelectorAll(".tag.hidden");
     let boxWidth = parseInt(getComputedStyle(box).width);
     let tagWidth = parseInt(getComputedStyle(tag).width);
-    let maxWidth = (boxWidth / 100) * 80 - 60;
+    let maxWidth = 0;
 
-    console.log(tagWidth, "param: " + param);
+    const mediaQuery = () => {
+      let screen = window.matchMedia("(max-width: 700px)");
+      if (screen.matches) {
+        // If media query matches
+        maxWidth = (boxWidth / 100) * 80 - 80;
+      } else {
+        maxWidth = (boxWidth / 100) * 80 - 160;
+      }
+    };
+
+    mediaQuery();
+
+    if (isNaN(tagWidth)) {
+      console.log("try to search in hidden tags array for value");
+      hiddenTags.forEach((element) => {
+        console.log("hiddenTag element", element);
+
+        if (tag.children[0].innerText === element[0]) tagWidth = element[1];
+        console.log(
+          tagWidth,
+          "is set for tagWidth",
+          "tag",
+          tag.children[0].innerText
+        );
+      });
+    }
+    //mobile 65%
+    //desktop 80%
+
+    console.log("maxWidth", maxWidth);
+    console.log(tag, tagWidth, "param: " + param);
 
     if (tagWidth === "auto") {
       console.log(tagWidth + " is auto");
@@ -254,9 +299,6 @@
       currentTagWidth += tagWidth;
     }
 
-    /*     console.log(currentTagWidth);
-    console.log(widthExceeded);
-    console.log(hiddenTags); */
     widthExceeded = currentTagWidth >= maxWidth;
 
     if (widthExceeded) {
@@ -307,43 +349,33 @@
               console.log("try to reveal if true");
               let selectHiddenTags = document.querySelectorAll(".tag.hidden");
               let firstHiddenTag = selectHiddenTags[0];
-              console.log("reveal target ", firstHiddenTag);
-              firstHiddenTag.classList.remove("hidden");
-              //remove first element from hiddenTags array
-              hiddenTags.shift();
-              tagLimit.innerText = "+" + hiddenTags.length + " ...";
-              console.log("remaining space: " + spaceAvailable);
-              currentTagWidth += hiddenTag[1];
+              if (firstHiddenTag !== undefined) {
+                console.log("reveal target ", firstHiddenTag);
+                firstHiddenTag.classList.remove("hidden");
+                //remove first element from hiddenTags array
+                hiddenTags.shift();
+                tagLimit.innerText = "+" + hiddenTags.length + " ...";
+                console.log("remaining space: " + spaceAvailable);
+                //adjust currentTagWidth
+                currentTagWidth += hiddenTag[1];
+              } else {
+                tagLimit.classList.add("hidden");
+              }
             } else {
-              tagLimit.classList.add("hidden");
               return;
             }
+          } else {
+            //hide limit span if nothing to reveal
+            tagLimit.classList.add("hidden");
           }
           console.log("----------\nLoopend\n----------");
         }
-
-        /*  let firstHiddenWidth = hiddenTags[0][1];
-        console.log("hiddenTagArray: " + hiddenTags);
-        console.log(
-          "getting width of first hidden element: " + firstHiddenWidth
-        );
-        console.log(
-          "space available > width of element: ",
-          spaceAvailable > firstHiddenWidth
-        );
-        console.log("try to reveal if true");
-        let selectHiddenTags = document.querySelectorAll(".tag.hidden");
-        let firstHiddenTag = selectHiddenTags[0];
-        console.log("reveal target ", firstHiddenTag);
-        firstHiddenTag.classList.remove("hidden");
-        //remove first element from hiddenTags array
-        hiddenTags.shift();
-        tagLimit.innerText = "+" + hiddenTags.length + " ..."; */
       }
     }
     console.log(currentTagWidth);
     console.log("currently " + hiddenTags.length + " are hidden");
     if (hiddenTags.length === 0) tagLimit.classList.add("hidden");
+    //setWidthForTags(currentTagWidth);
   };
 
   const tagHandler = (str) => {
@@ -377,8 +409,8 @@
 
       tagText.addEventListener("mousedown", (event) => {
         event.preventDefault();
-        let requestInput = document.querySelector("#id_location01");
-        requestInput.click();
+        let requestTextarea = document.querySelector("#id_location01");
+        requestTextarea.click();
       });
 
       //check if width is widthExceeded, wrap if true
@@ -416,6 +448,7 @@
         ajaxResult = result["data"];
         renderDropdown(ajaxResult, currentList);
         inputHandler(inputHandlerResult);
+        formHandler();
       }
     );
   });
