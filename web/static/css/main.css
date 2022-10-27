@@ -169,6 +169,7 @@ select {
   line-height: 15px;
   border-radius: 5px;
   color: var(--blue);
+  cursor: pointer;
 }
 
 #request_container .border_box {
