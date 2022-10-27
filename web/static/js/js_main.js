@@ -13,12 +13,11 @@
   const formHandler = () => {
     submitButton = document.querySelector("#request_container button");
     submitButton.addEventListener("click", (event) => {
-      //event.preventDefault();
       let requestInput = document.querySelector("#id_request");
       let requestTextarea = document.querySelector("#id_location01");
-
       requestTextarea.value = new Date().toLocaleString();
       requestTextarea.style.color = "white";
+
       currentTags.forEach((element) => {
         requestInput.value += element + ", ";
       });
