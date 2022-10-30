@@ -62,9 +62,9 @@
       for (i = 0; i < currentList.length; i++) {
         if (currentValue === currentList[i].slice(0, currentValue.length)) {
           inputTipsResults.push(currentList[i]);
-          };
-      
-      // if list element is more than 1 word, check each one of them
+        }
+
+        // if list element is more than 1 word, check each one of them
         if (currentList[i].split(" ").length >= 2) {
           let split = currentList[i].split(" ");
           split.forEach((element, index) => {
@@ -74,31 +74,23 @@
           });
         }
       }
-      
-      
 
       if (currentValue.length > 0) {
-        for (i = 0; i < inputTipsResults.length; i++) {
-        }
+        for (i = 0; i < inputTipsResults.length; i++) {}
         let listTexts = document.querySelectorAll("#dropdown .list_text");
 
         listTexts.forEach((listText) => {
           listText.parentElement.classList.add("hidden");
 
           inputTipsResults.forEach((element) => {
-            if (element === listText.innerText ) {
+            if (element === listText.innerText) {
               listText.parentElement.classList.remove("hidden");
-            } 
+            }
           });
-
-
-
         });
       }
 
       currentValue = requestTextarea.value;
-
-  
 
       // if more than one space, delete last one
 
@@ -328,8 +320,6 @@
         });
       });
     }
-
-    //
 
     if (param === "remove" && currentTagWidth > 0) {
       currentTagWidth -= tagWidth;
