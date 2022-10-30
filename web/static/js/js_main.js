@@ -56,7 +56,83 @@
         "#dropdown .user_input span"
       );
 
+      //user tips on input
+      let inputTipsResults = [];
+
+      for (i = 0; i < currentList.length; i++) {
+        if (currentValue === currentList[i].slice(0, currentValue.length)) {
+          inputTipsResults.push(currentList[i]);
+          };
+      
+      // if list element is more than 1 word, check each one of them
+        if (currentList[i].split(" ").length >= 2) {
+          let split = currentList[i].split(" ");
+          split.forEach((element, index) => {
+            if (currentValue === element.slice(0, currentValue.length)) {
+              inputTipsResults.push(currentList[i]);
+            }
+          });
+        }
+      }
+      
+      
+
+      if (currentValue.length > 0) {
+       // console.log(currentValue.length);
+        for (i = 0; i < inputTipsResults.length; i++) {
+        //  console.log[inputTipsResults[i]];
+        }
+        let listTexts = document.querySelectorAll("#dropdown .list_text");
+
+        listTexts.forEach((listText) => {
+          listText.parentElement.classList.add("hidden");
+
+          inputTipsResults.forEach((element) => {
+            if (element === listText.innerText ) {
+              listText.parentElement.classList.remove("hidden");
+              console.log(listText, "hidden removed");
+            } 
+          });
+
+
+////tomorrow
+
+          /* if (listText.innerText.includes(" ")) {
+            console.log("includes space!  ");
+            let split = listText.innerText.split(" ");
+            console.log(split);
+            
+            inputTipsResults.forEach((element) => {
+              split.forEach((s, i)=>{
+                if (element === s) {
+                  console.log(element, s);
+                  
+                  listText.parentElement.classList.remove("hidden");
+                  return;
+                  console.log(listText, "hidden removed");
+                }
+              }) 
+             
+              }
+              );
+            
+          } */
+        });
+      }
+
       currentValue = requestTextarea.value;
+
+      console.log;
+
+      // if more than one space, delete last one
+
+      if (
+        (currentValue.length === 1 && currentValue[0] === " ") ||
+        currentValue[0] === "\n"
+      ) {
+        console.log(currentValue);
+        requestTextarea.value = "";
+      }
 
       //check if input value is delimeter and clear input
       if (
@@ -70,9 +146,8 @@
       } else {
         dropdownUserList.innerText = currentValue;
         let lastChar = currentValue.slice(-1);
-        //check for delimeter at the end of input value
-        let delimeterFound =
-          lastChar === " " || lastChar === "," || lastChar === "\n";
+        //check for delimeter at the end of input value, delete last char if found
+        let delimeterFound = lastChar === "," || lastChar === "\n";
         // handle tag if found
         if (delimeterFound) {
           inputHandlerResult.pop();
@@ -124,15 +199,32 @@
   const dropdownVisibility = (focus, inputValue) => {
     //show/hide dropdown list
     let dropdownList = document.querySelector("#dropdown .list");
+
     let dropdownUserList = document.querySelector("#dropdown .user_input");
 
     if (focus) {
       if (inputValue !== undefined && inputValue.length > 0) {
-        dropdownList.classList.add("hidden");
+        dropdownList.classList.remove("hidden");
         dropdownUserList.classList.remove("hidden");
       } else {
         dropdownList.classList.remove("hidden");
         dropdownUserList.classList.add("hidden");
+
+        let dropdownListItems = [...dropdownList.children];
+        dropdownListItems.forEach((item) => {
+          if (item.classList.contains("hidden")) {
+            item.classList.remove("hidden");
+          }
+        });
+      }
+
+      if (inputValue === undefined || inputValue.length === 0) {
+        let dropdownListItems = [...dropdownList.children];
+        dropdownListItems.forEach((item) => {
+          if (item.classList.contains("hidden")) {
+            item.classList.remove("hidden");
+          }
+        });
       }
     } else {
       dropdownList.classList.add("hidden");
@@ -187,9 +279,6 @@
               currentTags.forEach((element, index) => {
                 if (element === itemText) currentTags.splice(index, 1);
               });
-              // hiddenTags.forEach((element, index) => {
-              //   if (element === itemText) hiddenTags.splice(index, 1);
-              // });
 
               //remove selected
               let tagsTextsInitial = document.querySelectorAll(".tag_text");
@@ -233,7 +322,6 @@
     let tagsSpan = document.querySelector("#request_container .tag_items");
     let tagItems = [...tagsSpan.children];
     let tagLimit = document.querySelector("#request_container .tag_limit");
-    let selectHiddenTags = document.querySelectorAll(".tag.hidden");
     let boxWidth = parseInt(getComputedStyle(box).width);
     let tagWidth = parseInt(getComputedStyle(tag).width);
     let maxWidth = 0;
