@@ -78,9 +78,7 @@
       
 
       if (currentValue.length > 0) {
-       // console.log(currentValue.length);
         for (i = 0; i < inputTipsResults.length; i++) {
-        //  console.log[inputTipsResults[i]];
         }
         let listTexts = document.querySelectorAll("#dropdown .list_text");
 
@@ -90,39 +88,17 @@
           inputTipsResults.forEach((element) => {
             if (element === listText.innerText ) {
               listText.parentElement.classList.remove("hidden");
-              console.log(listText, "hidden removed");
             } 
           });
 
 
-////tomorrow
 
-          /* if (listText.innerText.includes(" ")) {
-            console.log("includes space!  ");
-            let split = listText.innerText.split(" ");
-            console.log(split);
-            
-            inputTipsResults.forEach((element) => {
-              split.forEach((s, i)=>{
-                if (element === s) {
-                  console.log(element, s);
-                  
-                  listText.parentElement.classList.remove("hidden");
-                  return;
-                  console.log(listText, "hidden removed");
-                }
-              }) 
-             
-              }
-              );
-            
-          } */
         });
       }
 
       currentValue = requestTextarea.value;
 
-      console.log;
+  
 
       // if more than one space, delete last one
 
@@ -130,7 +106,6 @@
         (currentValue.length === 1 && currentValue[0] === " ") ||
         currentValue[0] === "\n"
       ) {
-        console.log(currentValue);
         requestTextarea.value = "";
       }
 
